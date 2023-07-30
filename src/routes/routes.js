@@ -50,7 +50,29 @@ router.post("/questions", async (req, res) => {
 });
 
 //Route for updating one question
-router.put("/questions/:id", (req, res) => {});
+router.put("/questions/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { description, alternatives } = req.body;
+
+    const selectedQuestion = await Question.findById(id);
+
+    if (!selectedQuestion) {
+      return res
+        .status(404)
+        .json("Error: question not found. Try a different id.");
+    } else {
+      selectedQuestion.description = description;
+      selectedQuestion.alternatives = alternatives;
+      await selectedQuestion.save();
+      return res
+        .status(200)
+        .json({ selectedQuestion, message: "Question updated" });
+    }
+  } catch (error) {
+    return res.status(500).json(`Error: ${error}`);
+  }
+});
 
 //Route for deleting one question
 router.delete("/questions/:id", async (req, res) => {
