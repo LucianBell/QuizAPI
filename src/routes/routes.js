@@ -18,7 +18,13 @@ router.get("/questions/:id", async (req, res) => {
     const id = req.params.id;
     const selectedQuestion = await Question.findById(id);
 
-    return res.status(200).json(selectedQuestion);
+    if (!selectedQuestion) {
+      return res
+        .status(404)
+        .json("Error: question not found. Try a different id.");
+    } else {
+      return res.status(200).json(selectedQuestion);
+    }
   } catch (error) {
     return res.status(500).json(`Error: ${error}`);
   }
@@ -47,7 +53,25 @@ router.post("/questions", async (req, res) => {
 router.put("/questions/:id", (req, res) => {});
 
 //Route for deleting one question
-router.delete("/questions/:id", (req, res) => {});
+router.delete("/questions/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const selectedQuestion = await Question.findById(id);
+
+    if (!selectedQuestion) {
+      return res
+        .status(404)
+        .json("Error: question not found. Try a different id.");
+    } else {
+      const deletedQuestion = await Question.findByIdAndDelete(id);
+      return res
+        .status(200)
+        .json({ deletedQuestion, message: "Question deleted" });
+    }
+  } catch (error) {
+    return res.status(500).json(`Error: ${error}`);
+  }
+});
 
 //Test route
 router.get("/", (req, res) => {
