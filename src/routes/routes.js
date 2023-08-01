@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Question = require("../models/Question");
+const UserController = require("../controller/UserController");
 
 //Route for getting all questions
 router.get("/questions", async (req, res) => {
@@ -94,6 +95,12 @@ router.delete("/questions/:id", async (req, res) => {
     return res.status(500).json(`Error: ${error}`);
   }
 });
+
+router.get("/users", UserController.getAllUsers);
+router.get("/users/:id", UserController.getUserByID);
+router.post("/users", UserController.createUser);
+router.put("/users/:id", UserController.updateUser);
+router.delete("/users/:id", UserController.deleteUser);
 
 //Test route
 router.get("/", (req, res) => {
